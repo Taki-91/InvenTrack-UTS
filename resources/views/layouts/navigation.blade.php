@@ -1,143 +1,345 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+ <nav x-data="{ open: false }" class="it-nav">
     @php
         $user = Auth::user();
-        $isAdmin = $user && $user->isAdmin();
-        $isStaff = $user && $user->isStaff();
         $isOwner = $user && $user->isOwner();
+        $isAdmin = $user && $user->isAdmin();
+        $isUser = $user && !$isOwner && !$isAdmin;
     @endphp
 
-    <!-- Desktop Navigation -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center">
-                <a href="{{ route('dashboard') }}" class="flex items-center">
-                    <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    <span class="ms-2 font-bold text-gray-800">InvenTrack</span>
+    <style>
+        .it-nav {
+            --maroon: #3D1025;
+            --burgundy: #762D46;
+            --text: #F4E9ED;
+            --muted: #D7B9C5;
+            font-family: 'Figtree', sans-serif;
+        }
+
+        .it-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            width: 258px;
+            padding: 24px 17px;
+            overflow-y: auto;
+            background: var(--maroon);
+            color: white;
+            border-right: 1px solid #633047;
+            transition: transform .25s ease;
+        }
+
+        .it-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 9px 25px;
+            border-bottom: 1px solid #633047;
+            color: white;
+            text-decoration: none;
+        }
+
+        .it-logo {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #A64B6A, #762D46);
+            font-size: 23px;
+            font-weight: 800;
+            box-shadow: 0 5px 15px #1b061180;
+        }
+
+        .it-brand-name {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .it-brand-sub {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 1.4px;
+        }
+
+        .it-section {
+            margin: 25px 10px 11px;
+            color: #C69BAA;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+        }
+
+        .it-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .it-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 13px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            transition: background .2s, color .2s;
+        }
+
+        .it-link:hover {
+            color: white;
+            background: #581E35;
+        }
+
+        .it-link.active {
+            color: white;
+            background: var(--burgundy);
+            border-color: #91445F;
+            box-shadow: 0 4px 12px #21081635;
+        }
+
+        .it-icon {
+            display: grid;
+            place-items: center;
+            width: 23px;
+            font-size: 17px;
+        }
+
+        .it-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .it-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 12px 9px;
+            border: 1px solid #633047;
+            background: #50172F;
+            border-radius: 12px;
+        }
+
+        .it-avatar {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            color: white;
+            font-weight: 800;
+            background: #8B3654;
+            border-radius: 11px;
+        }
+
+        .it-profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .it-name {
+            overflow: hidden;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .it-role {
+            margin-top: 4px;
+            color: #E8B7C7;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .8px;
+        }
+
+        .it-logout {
+            width: 100%;
+            margin-top: 9px;
+            padding: 11px 12px;
+            color: #F0B7C5;
+            background: transparent;
+            border: 0;
+            border-radius: 9px;
+            text-align: left;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .it-logout:hover {
+            background: #581E35;
+        }
+
+        .it-toggle {
+            display: none;
+        }
+
+        @media (min-width: 769px) {
+            body:has(.it-sidebar) main {
+                margin-left: 258px;
+            }
+
+            body:has(.it-sidebar) > div > header {
+                margin-left: 258px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .it-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .it-sidebar.it-open {
+                transform: translateX(0);
+            }
+
+            .it-toggle {
+                position: fixed;
+                top: 12px;
+                left: 12px;
+                z-index: 70;
+                display: block;
+                padding: 10px 13px;
+                color: white;
+                background: var(--maroon);
+                border: 1px solid #8B3654;
+                border-radius: 9px;
+            }
+
+            .it-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 40;
+                background: #0008;
+            }
+
+            body:has(.it-sidebar) main {
+                margin-left: 0;
+                padding-top: 55px;
+            }
+
+            body:has(.it-sidebar) > div > header {
+                margin-left: 0;
+                padding-top: 45px;
+            }
+        }
+    </style>
+
+    <button type="button" class="it-toggle" @click="open = !open">
+        ☰ Menu
+    </button>
+
+    <div
+        x-cloak
+        x-show="open"
+        class="it-overlay"
+        @click="open = false"
+    ></div>
+
+    <aside class="it-sidebar" :class="{ 'it-open': open }">
+        <a href="{{ route('dashboard') }}" class="it-brand">
+            <div class="it-logo">I</div>
+            <div>
+                <div class="it-brand-name">InvenTrack</div>
+                <div class="it-brand-sub">INVENTORY MANAGEMENT</div>
+            </div>
+        </a>
+
+        <div class="it-section">Main Menu</div>
+
+        <nav class="it-menu">
+            <a href="{{ route('dashboard') }}"
+               class="it-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+               @click="open = false">
+                <span class="it-icon">▦</span> Overview
+            </a>
+
+            @if ($isOwner || $isAdmin)
+                <div class="it-section">Inventory</div>
+
+                <a href="{{ route('categories.index') }}"
+                   class="it-link {{ request()->routeIs('categories.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">▤</span> Kategori
+                </a>
+            @endif
+
+            @if ($isOwner)
+                <a href="{{ route('products.index') }}"
+                   class="it-link {{ request()->routeIs('products.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">▣</span> Manajemen Produk
                 </a>
 
-                <div class="hidden sm:flex sm:items-center sm:ms-10 space-x-6">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Dashboard
-                    </x-nav-link>
+                <a href="{{ route('suppliers.index') }}"
+                   class="it-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">♙</span> Supplier
+                </a>
+            @elseif ($isUser)
+                <a href="{{ route('products.index') }}"
+                   class="it-link {{ request()->routeIs('products.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">▣</span> Katalog Produk
+                </a>
+            @endif
 
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                        Kategori
-                    </x-nav-link>
+            @if ($isOwner || $isAdmin)
+                <div class="it-section">Operations</div>
 
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                        Produk
-                    </x-nav-link>
+                <a href="{{ route('purchases.index') }}"
+                   class="it-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">↙</span> Stok Masuk
+                </a>
+            @endif
 
-                    <x-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')">
-                        Supplier
-                    </x-nav-link>
+            <a href="{{ route('sales.index') }}"
+               class="it-link {{ request()->routeIs('sales.*') ? 'active' : '' }}"
+               @click="open = false">
+                <span class="it-icon">↗</span>
+                {{ $isUser ? 'Penjualan Saya' : 'Penjualan' }}
+            </a>
+        </nav>
 
-                    <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
-                        Pembelian
-                    </x-nav-link>
+        <div class="it-bottom">
+            <div class="it-section">Account</div>
 
-                    <x-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
-                        Penjualan
-                    </x-nav-link>
+            @if (Route::has('profile.edit'))
+                <a href="{{ route('profile.edit') }}"
+                   class="it-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+                   @click="open = false">
+                    <span class="it-icon">⚙</span> Profil Saya
+                </a>
+            @endif
+
+            <div class="it-profile">
+                <div class="it-avatar">
+                    {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                </div>
+                <div class="it-profile-info">
+                    <div class="it-name">{{ $user->name ?? 'Pengguna' }}</div>
+                    <div class="it-role">
+                        {{ $isOwner ? 'OWNER' : ($isAdmin ? 'ADMIN / STAFF' : 'USER') }}
+                    </div>
                 </div>
             </div>
 
-            <!-- User Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 bg-white hover:text-gray-700">
-                            <span>{{ $user->name }}</span>
-                            <span class="ms-2 text-xs text-gray-500">
-                                {{ $user->role }}
-                            </span>
-                            <svg class="ms-2 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            Profile
-                        </x-dropdown-link>
-
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault(); this.closest('form').submit();">
-                                Logout
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Mobile Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = !open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:bg-gray-100">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': !open}" class="inline-flex"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': !open, 'inline-flex': open}" class="hidden"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="it-logout">
+                    ↪ &nbsp; Keluar dari akun
                 </button>
-            </div>
+            </form>
         </div>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                Dashboard
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                Kategori
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                Produk
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')">
-                Supplier
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
-                Pembelian
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
-                Penjualan
-            </x-responsive-nav-link>
-        </div>
-
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ $user->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ $user->email }}</div>
-                <div class="text-sm text-gray-500">Role: {{ $user->role }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    Profile
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault(); this.closest('form').submit();">
-                        Logout
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-    </div>
+    </aside>
 </nav>

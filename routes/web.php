@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
@@ -16,15 +17,26 @@ Route::get('/', function () {
 // Semua halaman yang memerlukan login
 Route::middleware('auth')->group(function () {
 
-    // Dashboard
+    // DASHBOARD
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // KATEGORI
+    // PROFIL
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
+    // KATEGORI: semua role boleh melihat
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('categories.index');
 
-    Route::middleware('role:Admin')->group(function () {
+    // OWNER DAN ADMIN/STAF boleh mengelola kategori
+    Route::middleware('role:Owner,Admin')->group(function () {
         Route::get('/categories/create', [CategoryController::class, 'create'])
             ->name('categories.create');
 
@@ -41,11 +53,12 @@ Route::middleware('auth')->group(function () {
             ->name('categories.destroy');
     });
 
-    // PRODUK
+    // PRODUK: semua role boleh melihat
     Route::get('/products', [ProductController::class, 'index'])
         ->name('products.index');
 
-    Route::middleware('role:Admin')->group(function () {
+    // HANYA OWNER boleh mengelola produk
+    Route::middleware('role:Owner')->group(function () {
         Route::get('/products/create', [ProductController::class, 'create'])
             ->name('products.create');
 
@@ -62,11 +75,12 @@ Route::middleware('auth')->group(function () {
             ->name('products.destroy');
     });
 
-    // SUPPLIER
+    // SUPPLIER: semua role boleh melihat
     Route::get('/suppliers', [SupplierController::class, 'index'])
         ->name('suppliers.index');
 
-    Route::middleware('role:Admin')->group(function () {
+    // HANYA OWNER boleh mengelola supplier
+    Route::middleware('role:Owner')->group(function () {
         Route::get('/suppliers/create', [SupplierController::class, 'create'])
             ->name('suppliers.create');
 
@@ -83,38 +97,41 @@ Route::middleware('auth')->group(function () {
             ->name('suppliers.destroy');
     });
 
-    // PEMBELIAN / STOK MASUK
-    Route::get('/purchases', [PurchaseController::class, 'index'])
-        ->name('purchases.index');
+    // STOK MASUK: Owner dan Admin/Staf
+    Route::middleware('role:Owner,Admin')->group(function () {
+        Route::get('/purchases', [PurchaseController::class, 'index'])
+            ->name('purchases.index');
 
-    // Admin dan Staff boleh membuat pembelian / stock-in
-    Route::middleware('role:Admin,Staff')->group(function () {
         Route::get('/purchases/create', [PurchaseController::class, 'create'])
             ->name('purchases.create');
 
         Route::post('/purchases', [PurchaseController::class, 'store'])
             ->name('purchases.store');
+
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])
+            ->name('purchases.show');
     });
 
-    Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])
-        ->name('purchases.show');
+    // PENJUALAN: Owner, Admin/Staf, dan User
+    Route::middleware('role:Owner,Admin,User')->group(function () {
+        Route::get('/sales', [SaleController::class, 'index'])
+            ->name('sales.index');
 
-    // PENJUALAN
-    Route::get('/sales', [SaleController::class, 'index'])
-        ->name('sales.index');
-
-    // Admin dan Staff boleh membuat penjualan
-    Route::middleware('role:Admin,Staff')->group(function () {
         Route::get('/sales/create', [SaleController::class, 'create'])
             ->name('sales.create');
 
         Route::post('/sales', [SaleController::class, 'store'])
             ->name('sales.store');
+
+        Route::get('/sales/{sale}', [SaleController::class, 'show'])
+            ->name('sales.show');
     });
 
-    Route::get('/sales/{sale}', [SaleController::class, 'show'])
-        ->name('sales.show');
+    // PEMBATALAN TRANSAKSI: HANYA OWNER
+    Route::patch('/sales/{sale}/cancel', [SaleController::class, 'cancel'])
+        ->middleware('role:Owner')
+        ->name('sales.cancel');
 });
 
-// Route login, logout, dan autentikasi lainnya
+// Autentikasi
 require __DIR__.'/auth.php';

@@ -1,215 +1,168 @@
-# InvenTrack - Sistem Informasi Inventaris
+# InvenTrack
+### Inventory Management System
 
-InvenTrack adalah aplikasi berbasis web untuk mengelola data inventaris barang, kategori, supplier, transaksi pembelian, dan penjualan. Aplikasi ini dibuat menggunakan Laravel sebagai proyek UTS.
+InvenTrack adalah aplikasi berbasis web untuk membantu pengelolaan inventaris barang. Aplikasi ini dibuat untuk memudahkan pencatatan produk, pengelolaan stok, data supplier, pembelian, dan penjualan dalam satu sistem.
 
-## Fitur Aplikasi
+## Fitur Utama
 
-- Login dan logout pengguna.
-- Dashboard untuk menampilkan ringkasan data inventaris dan transaksi.
-- Pengelolaan kategori, produk, dan supplier.
-- Pencatatan transaksi pembelian atau stok masuk.
-- Pencatatan transaksi penjualan.
-- Perubahan stok otomatis berdasarkan transaksi.
-- Validasi stok agar jumlah penjualan tidak melebihi stok yang tersedia.
-- Pencarian dan daftar data transaksi.
-- Informasi produk dengan stok menipis.
-- Hak akses pengguna berdasarkan role.
+- **Dashboard**  
+  Menampilkan ringkasan inventaris, aktivitas transaksi, grafik penjualan, produk terlaris, dan informasi stok menipis.
+
+- **Manajemen Produk**  
+  Menampilkan dan mengelola data produk, harga, kategori, serta jumlah stok sesuai hak akses pengguna.
+
+- **Manajemen Kategori**  
+  Mengelola kategori untuk mengelompokkan produk.
+
+- **Manajemen Supplier**  
+  Menampilkan daftar supplier serta menyediakan pengelolaan data supplier sesuai hak akses.
+
+- **Stok Masuk**  
+  Mencatat transaksi pembelian dan barang yang masuk ke inventaris.
+
+- **Penjualan**  
+  Mencatat transaksi penjualan dan menampilkan riwayat transaksi.
+
+- **Login dan Hak Akses**  
+  Pengguna harus login untuk mengakses aplikasi. Menu dan tindakan yang tersedia disesuaikan dengan peran pengguna.
 
 ## Teknologi yang Digunakan
 
-- PHP 8.2
-- Laravel 12
+- Laravel
+- PHP
 - MySQL
 - Blade Template
-- Tailwind CSS
-- Vite
-- XAMPP
+- HTML dan CSS
+- JavaScript
 - Composer
+- XAMPP sebagai lingkungan pengembangan lokal
+
+## Persyaratan
+
+Pastikan perangkat sudah memiliki:
+
+- PHP sesuai versi Laravel yang digunakan
+- Composer
+- MySQL atau MariaDB
 - Node.js dan npm
-
-## Persyaratan Sistem
-
-Sebelum menjalankan aplikasi, pastikan perangkat sudah memiliki:
-
-- PHP 8.2 atau versi yang sesuai dengan kebutuhan proyek.
-- Composer.
-- Node.js dan npm.
-- MySQL atau MariaDB.
-- XAMPP atau lingkungan server lokal sejenis.
+- Git (opsional)
 
 ## Cara Instalasi
 
-### 1. Clone Repository
-
-Buka terminal, lalu jalankan:
+### 1. Clone repository
 
 ```bash
-git clone URL_REPOSITORY
-```
-
-Ganti `URL_REPOSITORY` dengan URL repository GitHub proyek InvenTrack.
-
-Masuk ke folder proyek:
-
-```bash
+git clone https://github.com/Taki-91/InvenTrack-UTS
 cd inventory-uts
 ```
 
-### 2. Install Dependency
+Jika project sudah ada di komputer, buka terminal pada folder tersebut dan lewati langkah ini.
 
-Install dependency Laravel:
+### 2. Install dependency
 
 ```bash
 composer install
-```
-
-Install dependency frontend:
-
-```bash
 npm install
 ```
 
-### 3. Konfigurasi Environment
+### 3. Konfigurasi environment
 
-Salin file `.env.example` menjadi `.env`.
-
-Di Windows PowerShell, gunakan:
+Salin file `.env.example` menjadi `.env`. Pada Windows, kamu bisa menggunakan:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Buat application key:
+Kemudian buat application key:
 
 ```bash
 php artisan key:generate
 ```
 
-### 4. Konfigurasi Database
+### 4. Buat database
 
-Jalankan Apache dan MySQL melalui XAMPP.
+Buka phpMyAdmin, lalu buat database sesuai nama yang akan digunakan di file `.env`.
 
-Buat database dengan nama:
-
-```text
-inventory_uts
-```
-
-Kemudian sesuaikan konfigurasi database di file `.env`:
+Contoh konfigurasi:
 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=inventory_uts
+DB_DATABASE=nama_database
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Konfigurasi di atas merupakan contoh untuk instalasi lokal XAMPP. Sesuaikan username dan password jika konfigurasi MySQL berbeda.
+Sesuaikan nama database dan kredensial dengan konfigurasi lokal.
 
-### 5. Siapkan Struktur Database
+### 5. Siapkan struktur database
 
-Jika menggunakan migration, jalankan:
+Gunakan file SQL atau migration yang disertakan dalam repository sesuai struktur database project.
+
+Jika project menggunakan migration Laravel dan database masih kosong, jalankan:
 
 ```bash
 php artisan migrate
 ```
 
-Jika proyek menggunakan seeder untuk membuat data awal, jalankan:
+Jangan menjalankan migration pada database yang sudah berisi data penting tanpa membuat cadangan terlebih dahulu.
 
-```bash
-php artisan db:seed
-```
+### 6. Jalankan aplikasi
 
-Jika database disediakan dalam file SQL, impor file tersebut melalui phpMyAdmin sebagai alternatif sesuai struktur database proyek. Jangan menjalankan impor SQL dan migration secara bersamaan tanpa memeriksa struktur tabel terlebih dahulu.
-
-### 6. Jalankan Aplikasi
-
-Jalankan server Laravel:
+Buka terminal pertama:
 
 ```bash
 php artisan serve
 ```
 
-Untuk menjalankan aset frontend selama pengembangan, buka terminal kedua dan jalankan:
+Jika aset frontend perlu dikompilasi, buka terminal kedua:
 
 ```bash
 npm run dev
 ```
 
-Buka aplikasi melalui browser:
+Buka alamat berikut di browser:
 
-```text
 http://127.0.0.1:8000
-```
 
 ## Hak Akses Pengguna
 
-Aplikasi memiliki tiga role pengguna:
+Hak akses disesuaikan dengan peran masing-masing akun.
 
-| Role | Hak Akses |
+| Peran | Akses |
 |---|---|
-| Admin | Mengelola data utama dan melakukan transaksi sesuai hak akses yang diterapkan. |
-| Owner | Mengakses dashboard dan data inventaris serta transaksi sesuai hak akses yang diterapkan. |
-| Staff | Melihat data inventaris dan melakukan transaksi yang diizinkan, seperti stok masuk dan penjualan. |
+| Owner | Mengelola fitur dan data sesuai kewenangan Owner. |
+| Admin/Staff | Mengakses fitur operasional sesuai hak akses, termasuk melihat daftar supplier. |
+| User | Mengakses fitur yang disediakan untuk pengguna biasa. |
 
-Akses setiap halaman ditentukan oleh middleware dan konfigurasi role di aplikasi.
+Akses setiap fitur mengikuti implementasi autentikasi dan otorisasi di aplikasi.
 
-## Alur Transaksi
+## Struktur Database
 
-### Pembelian / Stok Masuk
+Database digunakan untuk menyimpan data pengguna, produk, kategori, supplier, pembelian, penjualan, serta rincian transaksi sesuai struktur database yang diterapkan.
 
-1. Pengguna membuka menu pembelian.
-2. Pengguna mengisi data transaksi dan barang yang diterima.
-3. Sistem memvalidasi data transaksi.
-4. Setelah transaksi berhasil, stok produk bertambah.
+**Dokumentasi database:**
+- ERD: tambahkan file ERD project di bagian ini.
+- SQL Schema: tambahkan file ekspor database jika tersedia.
 
-### Penjualan
+## Dokumentasi Aplikasi
 
-1. Pengguna membuka menu penjualan.
-2. Pengguna memilih produk dan jumlah barang yang dijual.
-3. Sistem memvalidasi jumlah barang terhadap stok tersedia.
-4. Jika transaksi berhasil, stok produk berkurang.
-5. Jika jumlah penjualan melebihi stok, sistem menolak transaksi.
+| Halaman | Screenshot |
+|---|---|
+| Login | `screenshots/login.png` |
+| Dashboard | `screenshots/dashboard.png` |
+| Produk | `screenshots/produk.png` |
+| Supplier | `screenshots/supplier.png` |
+| Penjualan | `screenshots/penjualan.png` |
 
-## Struktur Proyek
 
-Beberapa direktori utama yang digunakan:
+## Pengembang
 
-```text
-inventory-uts/
-├── app/
-│   ├── Http/Controllers/
-│   └── Models/
-├── database/
-│   ├── migrations/
-│   └── seeders/
-├── resources/
-│   └── views/
-├── routes/
-│   └── web.php
-├── public/
-├── config/
-├── .env.example
-├── composer.json
-├── package.json
-└── README.md
-```
-
-## Catatan Keamanan
-
-- File `.env` tidak boleh diunggah ke repository publik.
-- Gunakan `.env.example` sebagai contoh konfigurasi.
-- Jangan gunakan password akun pribadi untuk akun demo.
-- Pastikan setiap role hanya dapat mengakses fitur yang diizinkan.
-
-## Tujuan Proyek
-
-Proyek ini dibuat untuk memenuhi tugas Ujian Tengah Semester (UTS) dengan menerapkan pengelolaan data inventaris, relasi database, transaksi pembelian dan penjualan, validasi data, dashboard, serta pembatasan hak akses pengguna menggunakan Laravel.
+**Nama:** Mhd Agung Nurahman  
+**Program Studi:** Sistem Informasi  
+**Universitas:** Universitas Malikussaleh
 
 ---
 
-**Nama Aplikasi:** InvenTrack  
-**Jenis Proyek:** Sistem Informasi Inventaris Berbasis Web  
-**Framework:** Laravel 12
+InvenTrack - Inventory Management System
