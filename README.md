@@ -146,17 +146,6 @@ Database digunakan untuk menyimpan data pengguna, produk, kategori, supplier, pe
 - ERD: tambahkan file ERD project di bagian ini.
 - SQL Schema: tambahkan file ekspor database jika tersedia.
 
-## Dokumentasi Aplikasi
-
-| Halaman | Screenshot |
-|---|---|
-| Login | `screenshots/login.png` |
-| Dashboard | `screenshots/dashboard.png` |
-| Produk | `screenshots/produk.png` |
-| Supplier | `screenshots/supplier.png` |
-| Penjualan | `screenshots/penjualan.png` |
-
-
 ## Pengembang
 
 **Nama:** Mhd Agung Nurahman  
